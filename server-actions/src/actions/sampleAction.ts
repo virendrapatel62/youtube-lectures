@@ -11,3 +11,10 @@ export async function sampleActions(message: string) {
   console.log(response);
   return response;
 }
+
+export async function loginActions(formData: FormData) {
+  console.log(Object.fromEntries(formData));
+  return {
+    message: "Login Success",
+  };
+}
