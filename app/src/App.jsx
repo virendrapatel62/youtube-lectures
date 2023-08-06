@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function App() {
   return (
     <div>
@@ -8,6 +10,8 @@ function App() {
         enim ipsa in minus dicta? Magni dolorum quos dicta ut nisi minima
         nesciunt?
       </p>
+
+      <Link to="/store">Go To Store</Link>
     </div>
   );
 }
