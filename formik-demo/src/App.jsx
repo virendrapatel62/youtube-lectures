@@ -1,101 +1,101 @@
 import { useState } from "react";
 import "./App.css";
 
+import { useFormik } from "formik";
+import * as yup from "yup";
+
 function App() {
-  const [formValues, setFormValues] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    setErrors({
+  const form = useFormik({
+    initialValues: {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-    });
+    },
+    validationSchema: yup.object({
+      firstName: yup.string().required(),
+      lastName: yup.string().required(),
+      email: yup.string().required(),
+      password: yup
+        .string()
+        .matches(/[0-9A-Za-z]/)
+        .required(),
+    }),
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
-    if (formValues.firstName.length < 5) {
-      return setErrors({
-        ...errors,
-        firstName: "First name should have at least 5 characters",
-      });
-    }
-    if (formValues.lastName.length < 5) {
-      return setErrors({
-        ...errors,
-        lastName: "Last name should have at least 5 characters",
-      });
-    }
+  const errors = form.errors;
+  const touched = form.touched;
 
-    console.log("All Good!!!!");
-
-    // add you form submission logic
-  };
-
-  const handleOnChange = (event) => {
-    const { name, value } = event.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
   return (
     <div className="App ">
       <div className="container">
-        <form onSubmit={handleSubmit} action="">
+        <form onSubmit={form.handleSubmit} action="">
           <div className="form-group mt-3">
             <input
               placeholder="First Name"
               type="text"
               className="form-control"
-              onChange={handleOnChange}
               name="firstName"
+              onChange={form.handleChange}
+              onBlur={form.handleBlur}
             />
 
-            <p className="text-danger">{errors.firstName}</p>
+            {errors.firstName && touched.firstName && (
+              <p className="text-danger">
+                <small>{errors.firstName}</small>
+              </p>
+            )}
           </div>
           <div className="form-group mt-3">
             <input
               placeholder="Last Name"
               type="text"
               className="form-control"
-              onChange={handleOnChange}
               name="lastName"
+              onChange={form.handleChange}
+              onBlur={form.handleBlur}
             />
-            {errors.lastName && (
-              <p className="text-danger">{errors.lastName}</p>
+
+            {errors.lastName && touched.lastName && (
+              <p className="text-danger">
+                <small>{errors.lastName}</small>
+              </p>
             )}
           </div>
           <div className="form-group mt-3">
             <input
-              onChange={handleOnChange}
               name="email"
               placeholder="Email"
               type="email"
               className="form-control"
+              onChange={form.handleChange}
+              onBlur={form.handleBlur}
             />
 
-            {errors.email && <p className="text-danger">{errors.email}</p>}
+            {errors.email && touched.email && (
+              <p className="text-danger">
+                <small>{errors.email}</small>
+              </p>
+            )}
           </div>
           <div className="form-group mt-3">
             <input
               placeholder="Password"
               type="password"
-              className="form-control"
-              onChange={handleOnChange}
               name="password"
+              className="form-control"
+              onChange={form.handleChange}
+              onBlur={form.handleBlur}
             />
+
+            {errors.password && touched.password && (
+              <p className="text-danger">
+                <small>{errors.password}</small>
+              </p>
+            )}
           </div>
           <div className="form-group mt-3">
             <input type="submit" className="form-control btn btn-success" />
@@ -103,7 +103,9 @@ function App() {
         </form>
       </div>
 
-      <pre>{JSON.stringify(formValues, null, 2)}</pre>
+      <pre>{JSON.stringify(form.values, null, 2)}</pre>
+      <pre>{JSON.stringify(form.errors, null, 2)}</pre>
+      <pre>{JSON.stringify(form.touched, null, 2)}</pre>
     </div>
   );
 }
